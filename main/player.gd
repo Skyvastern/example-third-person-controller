@@ -8,11 +8,24 @@ class_name Player
 @export var gravity: float = 100
 
 @export_group("Look")
+@export var yaw: Node3D
+@export var pitch: Node3D
 @export var cam: Camera3D
+@export var mouse_sens: float = 0.1
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		# Rotate horizontally
+		yaw.rotation_degrees.y -= event.relative.x * mouse_sens
+		
+		# Rotate vertically
+		pitch.rotation_degrees.x -= event.relative.y * mouse_sens
+		pitch.rotation_degrees.x = clampf(pitch.rotation_degrees.x, -90, 90)
 
 
 func _physics_process(delta: float) -> void:
