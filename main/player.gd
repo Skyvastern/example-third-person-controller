@@ -6,6 +6,7 @@ class_name Player
 @export var sprint_speed: float = 20
 @export var jump_vel: float = 25
 @export var gravity: float = 100
+var has_jumped: bool = false
 
 @export_group("Look")
 @export var cam_root: Node3D
@@ -15,8 +16,14 @@ class_name Player
 @export var mouse_sens: float = 0.1
 @export var rotate_speed: float = 10
 
+@export_group("Animation")
+@export var anim_player: AnimationPlayer
+@export var anim_blend_duration: float = 0.4
+
 
 func _ready() -> void:
+	anim_player.animation_finished.connect(_on_anim_finished)
+	
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	
 	cam_root.top_level = true
@@ -36,9 +43,11 @@ func _physics_process(delta: float) -> void:
 	# Gravity and Jump
 	if is_on_floor():
 		velocity.y = 0
+		has_jumped = false
 		
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = jump_vel
+			has_jumped = true
 	else:
 		velocity.y -= gravity * delta
 	
@@ -67,6 +76,22 @@ func _physics_process(delta: float) -> void:
 		)
 	
 	cam_root.global_position = global_position
+	
+	# Animation
+	if is_on_floor():
+		if move_dir:
+			anim_player.play(
+				"running",
+				anim_blend_duration,
+				1.5 if Input.is_action_pressed("sprint") else 1.0
+			)
+		else:
+			anim_player.play("idle", anim_blend_duration)
+	else:
+		if has_jumped:
+			anim_player.play("jump", anim_blend_duration, 1.25)
+		else:
+			anim_player.play("falling", anim_blend_duration)
 
 
 func _get_speed() -> float:
@@ -74,3 +99,8 @@ func _get_speed() -> float:
 		return sprint_speed
 	else:
 		return speed
+
+
+func _on_anim_finished(anim_name: StringName) -> void:
+	if anim_name == "jump":
+		has_jumped = false
