@@ -8,14 +8,18 @@ class_name Player
 @export var gravity: float = 100
 
 @export_group("Look")
+@export var cam_root: Node3D
 @export var yaw: Node3D
 @export var pitch: Node3D
 @export var cam: Camera3D
 @export var mouse_sens: float = 0.1
+@export var rotate_speed: float = 10
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	cam_root.top_level = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -40,7 +44,7 @@ func _physics_process(delta: float) -> void:
 	
 	# Movement
 	var input_dir: Vector2 = Input.get_vector("left", "right", "forward", "backward")
-	var move_dir: Vector3 = cam.global_basis * Vector3(input_dir.x, 0, input_dir.y)
+	var move_dir: Vector3 = yaw.global_basis * Vector3(input_dir.x, 0, input_dir.y)
 	move_dir = move_dir.normalized()
 	
 	if move_dir:
@@ -51,6 +55,18 @@ func _physics_process(delta: float) -> void:
 		velocity.z = 0
 	
 	move_and_slide()
+	
+	# Rotation
+	if move_dir:
+		var target_pos: Vector3 = global_position + (move_dir * 10)
+		var target_transform: Transform3D = global_transform.looking_at(target_pos)
+		
+		global_basis = global_basis.slerp(
+			target_transform.basis,
+			rotate_speed * delta
+		)
+	
+	cam_root.global_position = global_position
 
 
 func _get_speed() -> float:

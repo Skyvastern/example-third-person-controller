@@ -16,9 +16,10 @@ albedo_color = Color(0.039215688, 0.039215688, 0.039215688, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1ilra"]
 
-[node name="Player" type="CharacterBody3D" unique_id=404133748 node_paths=PackedStringArray("yaw", "pitch", "cam")]
+[node name="Player" type="CharacterBody3D" unique_id=404133748 node_paths=PackedStringArray("cam_root", "yaw", "pitch", "cam")]
 collision_layer = 2
 script = ExtResource("1_ou4ca")
+cam_root = NodePath("Camera Root")
 yaw = NodePath("Camera Root/Yaw")
 pitch = NodePath("Camera Root/Yaw/Pitch")
 cam = NodePath("Camera Root/Yaw/Pitch/SpringArm3D/Camera3D")
