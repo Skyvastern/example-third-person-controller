@@ -16,8 +16,9 @@ albedo_color = Color(0.039215688, 0.039215688, 0.039215688, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1ilra"]
 
-[node name="Player" type="CharacterBody3D" unique_id=404133748]
+[node name="Player" type="CharacterBody3D" unique_id=404133748 node_paths=PackedStringArray("cam")]
 script = ExtResource("1_ou4ca")
+cam = NodePath("Camera Root/Yaw/Pitch/Camera3D")
 
 [node name="Body" type="MeshInstance3D" parent="." unique_id=57094287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
