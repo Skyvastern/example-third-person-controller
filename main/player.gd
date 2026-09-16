@@ -16,6 +16,16 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	# Gravity and Jump
+	if is_on_floor():
+		velocity.y = 0
+		
+		if Input.is_action_just_pressed("jump"):
+			velocity.y = jump_vel
+	else:
+		velocity.y -= gravity * delta
+	
+	# Movement
 	var input_dir: Vector2 = Input.get_vector("left", "right", "forward", "backward")
 	var move_dir: Vector3 = cam.global_basis * Vector3(input_dir.x, 0, input_dir.y)
 	move_dir = move_dir.normalized()
